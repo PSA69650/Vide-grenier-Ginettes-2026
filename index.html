@@ -24,6 +24,7 @@
         input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
         .price-tag { background: #273c75; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.4em; margin-top: 5px; }
         .hidden { display: none; }
+        .loading-text { font-size: 11px; color: #3498db; font-style: italic; display: block; margin-top: 2px; }
         button { width: 100%; padding: 15px; background-color: #273c75; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         button:hover { background-color: #192a56; }
         .qr-section { margin-top: 30px; text-align: center; border-top: 1px dashed #dcdde1; padding-top: 20px; }
@@ -40,8 +41,7 @@
     <h2>Pré-inscription Vide Grenier 2026 - Les Ginettes</h2>
 
     <div class="info-box">
-        <strong>📅 13 septembre 2026 (7h-17h)</strong>. Installation dès 6h. Véhicules interdits après 6h45.<br>
-        Documents requis : Pièce d'identité, charte signée et règlement (chèque ou virement).
+        <strong>📅 13 septembre 2026 (7h-17h)</strong>. Installation dès 6h. Véhicules interdits après 6h45.
     </div>
     
     <form id="videGrenierForm">
@@ -61,7 +61,7 @@
             <legend>Adresse postale</legend>
             <div class="form-group" style="margin-bottom: 15px;">
                 <label>Pays</label>
-                <select id="pays" onchange="updateVilleField()">
+                <select id="pays" onchange="resetVille()">
                     <option value="France">France</option>
                     <option value="Etranger">Étranger</option>
                 </select>
@@ -77,11 +77,12 @@
             <div class="form-row">
                 <div class="form-group small-group">
                     <label>CP</label>
-                    <input type="text" id="cp" required placeholder="69650" oninput="updateVilleField()">
+                    <input type="text" id="cp" required maxlength="5" placeholder="69650" oninput="chercherVille()">
+                    <span id="loading" class="loading-text hidden">Recherche...</span>
                 </div>
                 <div class="form-group" id="villeContainer">
                     <label>Ville</label>
-                    <input type="text" id="ville" required placeholder="Ville">
+                    <input type="text" id="ville" required placeholder="Saisissez le CP">
                 </div>
             </div>
         </fieldset>
@@ -144,21 +145,38 @@
 </div>
 
 <script>
-    const villesDemo = { "69650": ["Quincieux", "Saint-Germain-au-Mont-d'Or"] };
-
-    // Gestion de la ville dynamique
-    function updateVilleField() {
+    // --- RECHERCHE VILLE VIA API WEB (GOUV.FR) ---
+    async function chercherVille() {
         const cp = document.getElementById('cp').value;
+        const pays = document.getElementById('pays').value;
         const container = document.getElementById('villeContainer');
-        if (document.getElementById('pays').value === "France" && villesDemo[cp]) {
-            let options = villesDemo[cp].map(v => `<option value="${v}">${v}</option>`).join('');
-            container.innerHTML = `<label>Ville</label><select id="ville">${options}</select>`;
-        } else {
-            container.innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Ville">`;
+        const loading = document.getElementById('loading');
+
+        if (cp.length === 5 && pays === "France") {
+            loading.classList.remove('hidden');
+            try {
+                const response = await fetch(`https://geo.api.gouv.fr/communes?codePostal=${cp}&fields=nom&format=json`);
+                const villes = await response.json();
+
+                if (villes.length > 0) {
+                    let options = villes.map(v => `<option value="${v.nom}">${v.nom}</option>`).join('');
+                    container.innerHTML = `<label>Ville</label><select id="ville">${options}</select>`;
+                } else {
+                    container.innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Code inconnu">`;
+                }
+            } catch (error) {
+                container.innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Ville">`;
+            }
+            loading.classList.add('hidden');
         }
     }
 
-    // Mise à jour des libellés de tarifs
+    function resetVille() {
+        document.getElementById('villeContainer').innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Ville">`;
+        document.getElementById('cp').value = "";
+    }
+
+    // --- LOGIQUE TARIFS ---
     function majOptionsTarifs() {
         const estMembre = document.getElementById('membre').value === "Oui";
         document.getElementById('optExt').text = estMembre ? "Extérieur (6€/m)" : "Extérieur (8€/m)";
@@ -166,7 +184,6 @@
         document.getElementById('numAdherentGroup').className = estMembre ? "form-group" : "form-group hidden";
     }
 
-    // Calcul du total
     function calculerTotal() {
         const estMembre = document.getElementById('membre').value === "Oui";
         const type = document.getElementById('emplacement').value;
@@ -179,7 +196,7 @@
         document.getElementById('refGroup').className = (document.getElementById('proximite').value === "Oui") ? "" : "hidden";
     }
 
-    // CONTRÔLE ANTI-POINT-VIRGULE
+    // --- CONTRÔLE ANTI-POINT-VIRGULE ---
     function contientPointVirgule() {
         const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
         let erreur = false;
@@ -194,19 +211,17 @@
         return erreur;
     }
 
-    // SOUMISSION
+    // --- SOUMISSION ---
     document.getElementById('videGrenierForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         if (contientPointVirgule()) {
-            alert("Attention : Le caractère ';' est interdit pour ne pas perturber l'extraction des données. Merci de le supprimer des champs en rouge.");
+            alert("Erreur : Le caractère ';' est interdit dans le formulaire.");
             return;
         }
         
         const emailFull = document.getElementById('email').value;
         const emailParts = emailFull.split('@');
-        const idMail = emailParts;
-        const domaineMail = emailParts;
         
         const nom = document.getElementById('nom').value.toUpperCase();
         const prenom = document.getElementById('prenom').value;
@@ -216,28 +231,28 @@
         const cp = document.getElementById('cp').value;
         const ville = document.getElementById('ville').value;
         const pays = document.getElementById('pays').value;
-
-        const adresse = `${voie}, ${complement} ${cp} ${ville} (${pays})`;
         const membre = document.getElementById('membre').value;
-        const nAdherent = document.getElementById('numAdherent').value || "N/A";
+        const nAdh = document.getElementById('numAdherent').value || "N/A";
         const emp = document.getElementById('emplacement').value;
         const mtr = document.getElementById('metrage').value;
         const voisin = document.getElementById('refVoisin').value || "Aucun";
         const total = document.getElementById('affichageTarif').innerText;
 
-        const corpsMail = `INSCRIPTION VIDE GRENIER 2026\n\n` +
+        const adresseComplète = `${voie}, ${complement} ${cp} ${ville} (${pays})`;
+
+        const corpsMail = `NOUVELLE INSCRIPTION VIDE GRENIER 2026\n\n` +
             `IDENTITÉ : ${nom} ${prenom}\n` +
             `CONTACT : ${emailFull} | ${tel}\n` +
-            `ADRESSE : ${adresse}\n` +
+            `ADRESSE : ${adresseComplète}\n` +
             `RÉSERVATION : ${mtr}m en ${emp}\n` +
-            `ADHÉRENT : ${membre} (N° ${nAdherent})\n` +
-            `VOISIN SOUHAITÉ : ${voisin}\n` +
+            `ADHÉRENT : ${membre} (N° ${nAdh})\n` +
+            `VOISIN : ${voisin}\n` +
             `TOTAL À RÉGLER : ${total}\n\n` +
             `--- SYNTHÈSE CSV ---\n` +
             `Nom;Prenom;Email_ID;Email_Domaine;Tel;Adresse;Membre;NumAdherent;Type;Metres;Voisin;Total\n` +
-            `${nom};${prenom};${idMail};${domaineMail};${tel};${adresse};${membre};${nAdherent};${emp};${mtr};${voisin};${total}`;
+            `${nom};${prenom};${emailParts};${emailParts};${tel};${adresseComplète};${membre};${nAdh};${emp};${mtr};${voisin};${total}`;
 
-        window.location.href = `mailto:patricksalom@hotmail.com?subject=Inscription Vide Grenier Les Ginettes 2026&body=${encodeURIComponent(corpsMail)}`;
+        window.location.href = `mailto:patricksalom@hotmail.com?subject=Inscription Vide Grenier 2026&body=${encodeURIComponent(corpsMail)}`;
     });
 
     window.onload = majOptionsTarifs;
