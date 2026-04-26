@@ -11,31 +11,21 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
-        
         .logo-container { text-align: center; margin-bottom: 10px; }
-        .logo-container img { max-width: 90px; height: auto; }
-
+        .logo-container img { max-width: 120px; height: auto; }
         h2 { color: #2c3e50; text-align: center; font-size: 1.3em; border-bottom: 3px solid #fbc531; padding-bottom: 15px; margin-top: 0; }
-        
         .info-box { background-color: #fff9db; border-left: 5px solid #fbc531; padding: 15px; margin-bottom: 25px; border-radius: 4px; font-size: 14px; color: #5d4037; line-height: 1.5; }
-        .info-box h3 { margin-top: 0; color: #273c75; font-size: 16px; }
-
         fieldset { border: 1px solid #dcdde1; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         legend { padding: 0 10px; font-weight: bold; color: #273c75; font-size: 0.9em; text-transform: uppercase; }
-
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .form-group { flex: 1; min-width: 180px; }
         .small-group { flex: 0 0 100px; }
-        
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #34495e; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        
+        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
         .price-tag { background: #273c75; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.4em; margin-top: 5px; }
         .hidden { display: none; }
-
         button { width: 100%; padding: 15px; background-color: #273c75; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         button:hover { background-color: #192a56; }
-
         .qr-section { margin-top: 30px; text-align: center; border-top: 1px dashed #dcdde1; padding-top: 20px; }
         #qrcode { display: flex; justify-content: center; margin: 15px 0; }
     </style>
@@ -44,16 +34,14 @@
 
 <div class="container">
     <div class="logo-container">
-        <img src="https://img.icons8.com/fluency/96/shop.png" alt="Logo">
+        <img src="Logo.png" alt="Les Ginettes de Quincieux">
     </div>
     
-    <h2>Pré-inscription événement vide grenier par Les Ginettes de Quincieux</h2>
+    <h2>Pré-inscription Vide Grenier 2026 - Les Ginettes</h2>
 
     <div class="info-box">
-        <h3>📅 Règlement & Infos</h3>
-        Le vide grenier aura lieu le <strong>13 septembre 2026 de 7h à 17h</strong>. Installation dès 6h. Véhicules interdits après 6h45.
-        <br><br>
-        <strong>Documents à fournir :</strong> Pièce d'identité, charte complétée/signée et règlement (chèque ou virement).
+        <strong>📅 13 septembre 2026 (7h-17h)</strong>. Installation dès 6h. Véhicules interdits après 6h45.<br>
+        Documents requis : Pièce d'identité, charte signée et règlement (chèque ou virement).
     </div>
     
     <form id="videGrenierForm">
@@ -65,7 +53,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="exemple@mail.com"></div>
-                <div class="form-group"><label>Téléphone</label><input type="tel" id="tel" required pattern="[0-9]{10}" placeholder="0601020304"></div>
+                <div class="form-group"><label>Téléphone</label><input type="tel" id="tel" required pattern="[0-9]{10}" placeholder="0600000000"></div>
             </div>
         </fieldset>
 
@@ -80,11 +68,11 @@
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
                 <label>Voie (N°, rue...)</label>
-                <input type="text" id="voie" required placeholder="12 rue des Fleurs">
+                <input type="text" id="voie" required placeholder="12 rue de la Mairie">
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
                 <label>Complément</label>
-                <input type="text" id="complement" placeholder="Appartement, lieu-dit...">
+                <input type="text" id="complement" placeholder="Résidence, Etage...">
             </div>
             <div class="form-row">
                 <div class="form-group small-group">
@@ -99,7 +87,7 @@
         </fieldset>
 
         <fieldset>
-            <legend>Votre Emplacement</legend>
+            <legend>Réservation & Tarifs</legend>
             <div class="form-row">
                 <div class="form-group">
                     <label>Membre Ginettes ?</label>
@@ -110,7 +98,7 @@
                 </div>
                 <div id="numAdherentGroup" class="form-group hidden">
                     <label>N° Adhérent</label>
-                    <input type="text" id="numAdherent" placeholder="N° de carte">
+                    <input type="text" id="numAdherent" placeholder="N° Carte">
                 </div>
             </div>
             <div class="form-row">
@@ -122,7 +110,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Métrage (1 à 10m)</label>
+                    <label>Métrage (1-10m)</label>
                     <select id="metrage" onchange="calculerTotal()">
                         <option value="1">1 m</option><option value="2">2 m</option><option value="3" selected>3 m</option>
                         <option value="4">4 m</option><option value="5">5 m</option><option value="6">6 m</option>
@@ -137,14 +125,14 @@
         </fieldset>
 
         <fieldset>
-            <legend>Placement groupé</legend>
+            <legend>Option Placement</legend>
             <label>À côté d'un autre exposant ?</label>
             <select id="proximite" onchange="toggleRef()">
                 <option value="Non">Non</option>
                 <option value="Oui">Oui</option>
             </select>
             <div id="refGroup" class="hidden" style="margin-top:10px;">
-                <label>Nom ou Référence du voisin :</label>
+                <label>Nom du voisin :</label>
                 <input type="text" id="refVoisin" placeholder="Ex: Mme MARTIN">
             </div>
         </fieldset>
@@ -152,10 +140,7 @@
         <button type="submit">Envoyer ma pré-inscription</button>
     </form>
 
-    <div class="qr-section">
-        <div id="qrcode"></div>
-        <p style="font-size: 12px; color: #7f8c8d;">Partager ce formulaire</p>
-    </div>
+    <div class="qr-section"><div id="qrcode"></div></div>
 </div>
 
 <script>
@@ -163,11 +148,9 @@
 
     // Gestion de la ville dynamique
     function updateVilleField() {
-        const pays = document.getElementById('pays').value;
         const cp = document.getElementById('cp').value;
         const container = document.getElementById('villeContainer');
-
-        if (pays === "France" && villesDemo[cp]) {
+        if (document.getElementById('pays').value === "France" && villesDemo[cp]) {
             let options = villesDemo[cp].map(v => `<option value="${v}">${v}</option>`).join('');
             container.innerHTML = `<label>Ville</label><select id="ville">${options}</select>`;
         } else {
@@ -188,34 +171,75 @@
         const estMembre = document.getElementById('membre').value === "Oui";
         const type = document.getElementById('emplacement').value;
         const metres = parseInt(document.getElementById('metrage').value);
-        let prixMetre = estMembre ? (type === "Extérieur" ? 6 : 8) : (type === "Extérieur" ? 8 : 10);
-        document.getElementById('affichageTarif').innerText = (prixMetre * metres) + " €";
+        let prix = estMembre ? (type === "Extérieur" ? 6 : 8) : (type === "Extérieur" ? 8 : 10);
+        document.getElementById('affichageTarif').innerText = (prix * metres) + " €";
     }
 
     function toggleRef() {
         document.getElementById('refGroup').className = (document.getElementById('proximite').value === "Oui") ? "" : "hidden";
     }
 
-    // Soumission
+    // CONTRÔLE ANTI-POINT-VIRGULE
+    function contientPointVirgule() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
+        let erreur = false;
+        inputs.forEach(input => {
+            if (input.value.includes(';')) {
+                erreur = true;
+                input.style.border = "2px solid #e74c3c";
+            } else {
+                input.style.border = "1px solid #dcdde1";
+            }
+        });
+        return erreur;
+    }
+
+    // SOUMISSION
     document.getElementById('videGrenierForm').addEventListener('submit', function(e) {
         e.preventDefault();
+
+        if (contientPointVirgule()) {
+            alert("Attention : Le caractère ';' est interdit pour ne pas perturber l'extraction des données. Merci de le supprimer des champs en rouge.");
+            return;
+        }
+        
         const emailFull = document.getElementById('email').value;
         const emailParts = emailFull.split('@');
+        const idMail = emailParts;
+        const domaineMail = emailParts;
         
-        const corpsMail = `INSCRIPTION VIDE GRENIER :\n` +
-            `IDENTITÉ : ${document.getElementById('nom').value.toUpperCase()} ${document.getElementById('prenom').value}\n` +
-            `CONTACT : ${emailFull} | ${document.getElementById('tel').value}\n` +
-            `RESERVATION : ${document.getElementById('metrage').value}m (${document.getElementById('emplacement').value})\n` +
-            `ADHÉRENT : ${document.getElementById('membre').value} (N°: ${document.getElementById('numAdherent').value})\n` +
-            `VOISIN : ${document.getElementById('refVoisin').value || 'N/A'}\n` +
-            `TOTAL : ${document.getElementById('affichageTarif').innerText}\n\n` +
-            `--- SYNTHESE CSV ---\n` +
-            `${document.getElementById('nom').value};${document.getElementById('prenom').value};${emailParts};${emailParts};${document.getElementById('metrage').value};${document.getElementById('affichageTarif').innerText}`;
+        const nom = document.getElementById('nom').value.toUpperCase();
+        const prenom = document.getElementById('prenom').value;
+        const tel = document.getElementById('tel').value;
+        const voie = document.getElementById('voie').value;
+        const complement = document.getElementById('complement').value || " ";
+        const cp = document.getElementById('cp').value;
+        const ville = document.getElementById('ville').value;
+        const pays = document.getElementById('pays').value;
+
+        const adresse = `${voie}, ${complement} ${cp} ${ville} (${pays})`;
+        const membre = document.getElementById('membre').value;
+        const nAdherent = document.getElementById('numAdherent').value || "N/A";
+        const emp = document.getElementById('emplacement').value;
+        const mtr = document.getElementById('metrage').value;
+        const voisin = document.getElementById('refVoisin').value || "Aucun";
+        const total = document.getElementById('affichageTarif').innerText;
+
+        const corpsMail = `INSCRIPTION VIDE GRENIER 2026\n\n` +
+            `IDENTITÉ : ${nom} ${prenom}\n` +
+            `CONTACT : ${emailFull} | ${tel}\n` +
+            `ADRESSE : ${adresse}\n` +
+            `RÉSERVATION : ${mtr}m en ${emp}\n` +
+            `ADHÉRENT : ${membre} (N° ${nAdherent})\n` +
+            `VOISIN SOUHAITÉ : ${voisin}\n` +
+            `TOTAL À RÉGLER : ${total}\n\n` +
+            `--- SYNTHÈSE CSV ---\n` +
+            `Nom;Prenom;Email_ID;Email_Domaine;Tel;Adresse;Membre;NumAdherent;Type;Metres;Voisin;Total\n` +
+            `${nom};${prenom};${idMail};${domaineMail};${tel};${adresse};${membre};${nAdherent};${emp};${mtr};${voisin};${total}`;
 
         window.location.href = `mailto:patricksalom@hotmail.com?subject=Inscription Vide Grenier Les Ginettes 2026&body=${encodeURIComponent(corpsMail)}`;
     });
 
-    // Initialisation
     window.onload = majOptionsTarifs;
     new QRCode(document.getElementById("qrcode"), { text: window.location.href, width: 100, height: 100 });
 </script>
