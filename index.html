@@ -3,261 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Pré-inscription Vide Grenier - Les Ginettes de Quincieux</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Inscription Vide Grenier - Les Ginettes</title>
+    
+    <!-- SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        
+        /* Conteneur pour le logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .logo-container img {
+            max-width: 180px; /* Taille ajustable selon vos besoins */
+            height: auto;
+        }
+
         .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
-        .logo-container { text-align: center; margin-bottom: 10px; }
-        .logo-container img { max-width: 120px; height: auto; }
-        h2 { color: #2c3e50; text-align: center; font-size: 1.3em; border-bottom: 3px solid #fbc531; padding-bottom: 15px; margin-top: 0; }
-        .info-box { background-color: #fff9db; border-left: 5px solid #fbc531; padding: 15px; margin-bottom: 25px; border-radius: 4px; font-size: 14px; color: #5d4037; line-height: 1.5; }
+        h2 { color: #2c3e50; text-align: center; border-bottom: 3px solid #fbc531; padding-bottom: 10px; margin-top: 0; }
         fieldset { border: 1px solid #dcdde1; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        legend { padding: 0 10px; font-weight: bold; color: #273c75; font-size: 0.9em; text-transform: uppercase; }
+        legend { font-weight: bold; color: #273c75; padding: 0 10px; text-transform: uppercase; font-size: 0.9em; }
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .form-group { flex: 1; min-width: 180px; }
-        .small-group { flex: 0 0 100px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; color: #34495e; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
-        .price-tag { background: #273c75; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.4em; margin-top: 5px; }
-        .hidden { display: none; }
-        .loading-text { font-size: 11px; color: #3498db; font-style: italic; display: block; margin-top: 2px; }
-        button { width: 100%; padding: 15px; background-color: #273c75; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: #34495e; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .price-tag { background: #273c75; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.4em; margin-top: 10px; }
+        button { width: 100%; padding: 15px; background-color: #273c75; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { background-color: #192a56; }
-        .qr-section { margin-top: 30px; text-align: center; border-top: 1px dashed #dcdde1; padding-top: 20px; }
-        #qrcode { display: flex; justify-content: center; margin: 15px 0; }
+        button:disabled { background-color: #bdc3c7; }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <!-- Insertion du Logo Centré -->
     <div class="logo-container">
-        <img src="Logo.png" alt="Les Ginettes de Quincieux">
+        <img src="Logo.png" alt="Logo Association Les Ginettes">
     </div>
-    
-    <h2>Pré-inscription Vide Grenier 2026 - Les Ginettes</h2>
 
-    <div class="info-box">
-        <strong>📅 13 septembre 2026 (7h-17h)</strong>. Installation dès 6h. Véhicules interdits après 6h45.
-    </div>
-    
-    <form id="videGrenierForm">
-        <fieldset>
-            <legend>Identité & Contact</legend>
-            <div class="form-row">
-                <div class="form-group"><label>Nom</label><input type="text" id="nom" required placeholder="DUPONT"></div>
-                <div class="form-group"><label>Prénom</label><input type="text" id="prenom" required placeholder="Jean"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="exemple@mail.com"></div>
-                <div class="form-group"><label>Téléphone</label><input type="tel" id="tel" required pattern="[0-9]{10}" placeholder="0600000000"></div>
-            </div>
-        </fieldset>
+    <div class="container">
+        <h2>Pré-inscription Vide Grenier 2026</h2>
+        
+        <form id="videGrenierForm">
+            <fieldset>
+                <legend>Identité & Contact</legend>
+                <div class="form-row">
+                    <div class="form-group"><label>Nom</label><input type="text" id="nom" required placeholder="NOM"></div>
+                    <div class="form-group"><label>Prénom</label><input type="text" id="prenom" required placeholder="Prénom"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="exemple@mail.com"></div>
+                    <div class="form-group"><label>Téléphone</label><input type="tel" id="tel" required pattern="[0-9]{10}" placeholder="0600000000"></div>
+                </div>
+            </fieldset>
 
-        <fieldset>
-            <legend>Adresse postale</legend>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Pays</label>
-                <select id="pays" onchange="resetVille()">
-                    <option value="France">France</option>
-                    <option value="Etranger">Étranger</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Voie (N°, rue...)</label>
-                <input type="text" id="voie" required placeholder="12 rue de la Mairie">
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Complément</label>
-                <input type="text" id="complement" placeholder="Résidence, Etage...">
-            </div>
-            <div class="form-row">
-                <div class="form-group small-group">
-                    <label>CP</label>
-                    <input type="text" id="cp" required maxlength="5" placeholder="69650" oninput="chercherVille()">
-                    <span id="loading" class="loading-text hidden">Recherche...</span>
+            <fieldset>
+                <legend>Adresse postale</legend>
+                <div class="form-group"><label>Voie (N°, rue...)</label><input type="text" id="voie" required></div>
+                <div class="form-row" style="margin-top:10px;">
+                    <div class="form-group"><label>Code Postal</label><input type="text" id="cp" required maxlength="5"></div>
+                    <div class="form-group"><label>Ville</label><input type="text" id="ville" required></div>
                 </div>
-                <div class="form-group" id="villeContainer">
-                    <label>Ville</label>
-                    <input type="text" id="ville" required placeholder="Saisissez le CP">
-                </div>
-            </div>
-        </fieldset>
+            </fieldset>
 
-        <fieldset>
-            <legend>Réservation & Tarifs</legend>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Membre Ginettes ?</label>
-                    <select id="membre" onchange="majOptionsTarifs(); calculerTotal();">
-                        <option value="Non">Non</option>
-                        <option value="Oui">Oui</option>
-                    </select>
+            <fieldset>
+                <legend>Réservation</legend>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Emplacement</label>
+                        <select id="emplacement" onchange="calculer()">
+                            <option value="Extérieur">Extérieur (8€/m)</option>
+                            <option value="Intérieur">Intérieur (10€/m)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Métrage</label>
+                        <select id="metrage" onchange="calculer()">
+                            <option value="1">1 m</option><option value="2">2 m</option><option value="3" selected>3 m</option>
+                            <option value="4">4 m</option><option value="5">5 m</option>
+                        </select>
+                    </div>
                 </div>
-                <div id="numAdherentGroup" class="form-group hidden">
-                    <label>N° Adhérent</label>
-                    <input type="text" id="numAdherent" placeholder="N° Carte">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Emplacement</label>
-                    <select id="emplacement" onchange="calculerTotal()">
-                        <option value="Extérieur" id="optExt">Extérieur (8€/m)</option>
-                        <option value="Intérieur" id="optInt">Intérieur (10€/m)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Métrage (1-10m)</label>
-                    <select id="metrage" onchange="calculerTotal()">
-                        <option value="1">1 m</option><option value="2">2 m</option><option value="3" selected>3 m</option>
-                        <option value="4">4 m</option><option value="5">5 m</option><option value="6">6 m</option>
-                        <option value="7">7 m</option><option value="8">8 m</option><option value="9">9 m</option><option value="10">10 m</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Total à régler :</label>
                 <div id="affichageTarif" class="price-tag">24 €</div>
-            </div>
-        </fieldset>
+            </fieldset>
 
-        <fieldset>
-            <legend>Option Placement</legend>
-            <label>À côté d'un autre exposant ?</label>
-            <select id="proximite" onchange="toggleRef()">
-                <option value="Non">Non</option>
-                <option value="Oui">Oui</option>
-            </select>
-            <div id="refGroup" class="hidden" style="margin-top:10px;">
-                <label>Nom du voisin :</label>
-                <input type="text" id="refVoisin" placeholder="Ex: Mme MARTIN">
-            </div>
-        </fieldset>
-
-        <button type="submit">Envoyer ma pré-inscription</button>
-    </form>
-
-    <div class="qr-section"><div id="qrcode"></div></div>
-</div>
+            <button type="submit" id="btnSubmit">Envoyer l'inscription</button>
+        </form>
+    </div>
 
 <script>
-    // --- RECHERCHE VILLE VIA API WEB (GOUV.FR) ---
-    async function chercherVille() {
-        const cp = document.getElementById('cp').value;
-        const pays = document.getElementById('pays').value;
-        const container = document.getElementById('villeContainer');
-        const loading = document.getElementById('loading');
+    // Configuration Supabase
+    const S_URL = "https://dawnqgtitjrqmqnnrhky.supabase.co";
+    const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhd25xZ3RpdGpycW1xbm5yaGt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDIxMjcsImV4cCI6MjA5Mjc3ODEyN30.M4KyikZlZ8Sb_2sTA3O4GCloLktTH4Z8p789cf89FUU";
+    const _supabase = supabase.createClient(S_URL, S_KEY);
 
-        if (cp.length === 5 && pays === "France") {
-            loading.classList.remove('hidden');
-            try {
-                const response = await fetch(`https://geo.api.gouv.fr/communes?codePostal=${cp}&fields=nom&format=json`);
-                const villes = await response.json();
-
-                if (villes.length > 0) {
-                    let options = villes.map(v => `<option value="${v.nom}">${v.nom}</option>`).join('');
-                    container.innerHTML = `<label>Ville</label><select id="ville">${options}</select>`;
-                } else {
-                    container.innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Code inconnu">`;
-                }
-            } catch (error) {
-                container.innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Ville">`;
-            }
-            loading.classList.add('hidden');
-        }
-    }
-
-    function resetVille() {
-        document.getElementById('villeContainer').innerHTML = `<label>Ville</label><input type="text" id="ville" required placeholder="Ville">`;
-        document.getElementById('cp').value = "";
-    }
-
-    // --- LOGIQUE TARIFS ---
-    function majOptionsTarifs() {
-        const estMembre = document.getElementById('membre').value === "Oui";
-        document.getElementById('optExt').text = estMembre ? "Extérieur (6€/m)" : "Extérieur (8€/m)";
-        document.getElementById('optInt').text = estMembre ? "Intérieur (8€/m)" : "Intérieur (10€/m)";
-        document.getElementById('numAdherentGroup').className = estMembre ? "form-group" : "form-group hidden";
-    }
-
-    function calculerTotal() {
-        const estMembre = document.getElementById('membre').value === "Oui";
+    function calculer() {
         const type = document.getElementById('emplacement').value;
-        const metres = parseInt(document.getElementById('metrage').value);
-        let prix = estMembre ? (type === "Extérieur" ? 6 : 8) : (type === "Extérieur" ? 8 : 10);
-        document.getElementById('affichageTarif').innerText = (prix * metres) + " €";
+        const m = parseInt(document.getElementById('metrage').value);
+        const prix = (type === "Extérieur") ? 8 : 10;
+        document.getElementById('affichageTarif').innerText = (prix * m) + " €";
     }
 
-    function toggleRef() {
-        document.getElementById('refGroup').className = (document.getElementById('proximite').value === "Oui") ? "" : "hidden";
-    }
-
-    // --- CONTRÔLE ANTI-POINT-VIRGULE ---
-    function contientPointVirgule() {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-        let erreur = false;
-        inputs.forEach(input => {
-            if (input.value.includes(';')) {
-                erreur = true;
-                input.style.border = "2px solid #e74c3c";
-            } else {
-                input.style.border = "1px solid #dcdde1";
-            }
-        });
-        return erreur;
-    }
-
-    // --- SOUMISSION ---
-    document.getElementById('videGrenierForm').addEventListener('submit', function(e) {
+    document.getElementById('videGrenierForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerText = "Envoi en cours...";
 
-        if (contientPointVirgule()) {
-            alert("Erreur : Le caractère ';' est interdit dans le formulaire.");
-            return;
+        const participantId = crypto.randomUUID();[cite: 1, 2]
+        const total = parseFloat(document.getElementById('affichageTarif').innerText);
+
+        try {
+            // 1. Insertion Participant[cite: 1, 2]
+            const { error: errP } = await _supabase.from('participants').insert([{
+                id: participantId,
+                nom: document.getElementById('nom').value.toUpperCase(),
+                prenom: document.getElementById('prenom').value,
+                email: document.getElementById('email').value,
+                telephone: document.getElementById('tel').value,
+                adresse_voie: document.getElementById('voie').value,
+                adresse_cp: document.getElementById('cp').value,
+                adresse_ville: document.getElementById('ville').value
+            }]);
+
+            if (errP) throw errP;
+
+            // 2. Insertion Réservation[cite: 1, 2]
+            const { error: errR } = await _supabase.from('reservations').insert([{
+                participant_id: participantId,
+                evenement_id: 1,
+                metrage_reserve: parseInt(document.getElementById('metrage').value),
+                total_prix: total,
+                statut_dossier: 'En attente'
+            }]);
+
+            if (errR) throw errR;
+
+            alert("✅ Inscription réussie !");[cite: 1, 2]
+            document.getElementById('videGrenierForm').reset();
+            calculer();
+
+        } catch (err) {
+            alert("❌ Erreur : " + err.message);[cite: 1, 2]
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Envoyer l'inscription";
         }
-        
-        const emailFull = document.getElementById('email').value;
-        const emailParts = emailFull.split('@');
-        
-        const nom = document.getElementById('nom').value.toUpperCase();
-        const prenom = document.getElementById('prenom').value;
-        const tel = document.getElementById('tel').value;
-        const voie = document.getElementById('voie').value;
-        const complement = document.getElementById('complement').value || " ";
-        const cp = document.getElementById('cp').value;
-        const ville = document.getElementById('ville').value;
-        const pays = document.getElementById('pays').value;
-        const membre = document.getElementById('membre').value;
-        const nAdh = document.getElementById('numAdherent').value || "N/A";
-        const emp = document.getElementById('emplacement').value;
-        const mtr = document.getElementById('metrage').value;
-        const voisin = document.getElementById('refVoisin').value || "Aucun";
-        const total = document.getElementById('affichageTarif').innerText;
-
-        const adresseComplète = `${voie}, ${complement} ${cp} ${ville} (${pays})`;
-
-        const corpsMail = `NOUVELLE INSCRIPTION VIDE GRENIER 2026\n\n` +
-            `IDENTITÉ : ${nom} ${prenom}\n` +
-            `CONTACT : ${emailFull} | ${tel}\n` +
-            `ADRESSE : ${adresseComplète}\n` +
-            `RÉSERVATION : ${mtr}m en ${emp}\n` +
-            `ADHÉRENT : ${membre} (N° ${nAdh})\n` +
-            `VOISIN : ${voisin}\n` +
-            `TOTAL À RÉGLER : ${total}\n\n` +
-            `--- SYNTHÈSE CSV ---\n` +
-            `Nom;Prenom;Email_ID;Email_Domaine;Tel;Adresse;Membre;NumAdherent;Type;Metres;Voisin;Total\n` +
-            `${nom};${prenom};${emailParts};${emailParts};${tel};${adresseComplète};${membre};${nAdh};${emp};${mtr};${voisin};${total}`;
-
-        window.location.href = `mailto:patricksalom@hotmail.com?subject=Inscription Vide Grenier 2026&body=${encodeURIComponent(corpsMail)}`;
     });
-
-    window.onload = majOptionsTarifs;
-    new QRCode(document.getElementById("qrcode"), { text: window.location.href, width: 100, height: 100 });
 </script>
-
 </body>
 </html>
