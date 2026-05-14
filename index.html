@@ -11,6 +11,7 @@
     <!-- Bibliothèques : QRCode et Supabase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -61,6 +62,18 @@
             <div class="form-row">
                 <div class="form-group"><label>Nom</label><input type="text" id="nom" required placeholder="DUPONT"></div>
                 <div class="form-group"><label>Prénom</label><input type="text" id="prenom" required placeholder="Jean"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Né(e) le</label><input type="date" id="date_naissance" required placeholder="01/01/1950"></div>
+                <div class="form-group"><label>à</label><input type="text" id="commune_naissance" required placeholder="Quincieux"></div>
+                <div class="form-group"><label>Département</label><input type="text" id="département_naissance" required placeholder="Rhône (69)"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Tiulaire de la pièce d'identité n°</label><input type="text" id="PI_ID" required placeholder="123456789ABC"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Délivrée le</label><input type="date" id="PI_Date_délivrance" required placeholder="01/01/1950"></div>
+                <div class="form-group"><label>par</label><input type="text" id="PI_Lieu_délivrance" required placeholder="préfecture du Rhône"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><label>Email</label><input type="email" id="email" required placeholder="exemple@mail.com"></div>
@@ -263,7 +276,13 @@
                     adresse_cp: document.getElementById('cp').value,
                     adresse_ville: document.getElementById('ville').value,
                     est_membre: estMembre,
-                    num_adherent: estMembre ? document.getElementById('numAdherent').value : null
+                    num_adherent: estMembre ? document.getElementById('numAdherent').value : null,
+                    date_naissance: document.getElementById('date_naissance').value,
+                    commune_naissance: document.getElementById('commune_naissance').value,
+                    Departement_naissance: document.getElementById('département_naissance').value,
+                    PI_ID: document.getElementById('PI_ID').value,
+                    PI_Date_delivrance: document.getElementById('PI_Date_délivrance').value,
+                    PI_lieu_delivrance: document.getElementById('PI_Lieu_délivrance').value
                 }]);
 
             if (partError) throw partError;
@@ -281,7 +300,25 @@
                 }]);
 
             if (resError) throw resError;
-
+            
+            // ÉTAPE C : Génération du PDF
+            const infoPdf = {
+                nom: document.getElementById('nom').value.toUpperCase(),
+                prenom: document.getElementById('prenom').value,
+                date_naissance: document.getElementById('date_naissance').value,
+                commune_naissance: document.getElementById('commune_naissance').value,
+                dept_naissance: document.getElementById('département_naissance').value,
+                adresse: document.getElementById('voie').value,
+                cp: document.getElementById('cp').value,
+                ville: document.getElementById('ville').value,
+                tel: document.getElementById('tel').value,
+                email: document.getElementById('email').value,
+                pi_id: document.getElementById('PI_ID').value,
+                pi_date: document.getElementById('PI_Date_délivrance').value,
+                pi_lieu: document.getElementById('PI_Lieu_délivrance').value,
+                metrage: document.getElementById('metrage').value
+            };
+            await genererFormulairePDF(infoPdf);
             // SUCCESS POPUP
             alert("✅ Succès ! Votre pré-inscription a été enregistrée avec succès.");
             document.getElementById('videGrenierForm').reset();
@@ -299,6 +336,73 @@
 
     window.onload = majOptionsTarifs;
     new QRCode(document.getElementById("qrcode"), { text: window.location.href, width: 100, height: 100 });
+
+    // --- FONCTION DE GÉNÉRATION DU PDF COMPLÉTÉ ---
+async function genererFormulairePDF(donnees) {
+    const { PDFDocument, rgb } = PDFLib;
+
+    try {
+        // 1. Charger le fichier PDF fixe existant
+        const url = 'Inscription_VDG_2026.pdf';
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Fichier PDF source introuvable");
+        
+        const existingPdfBytes = await response.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        
+        // --- LA CORRECTION EST ICI ---
+        const pages = pdfDoc.getPages();
+        const firstPage = pages[0]; 
+        // On extrait explicitement la première page du tableau
+        // ------------------------------
+
+        if (!firstPage) throw new Error("Le PDF ne contient aucune page.");
+
+        // 2. Options du texte
+        const textOptions = { size: 10, color: rgb(0, 0, 0) };
+
+        // 3. Remplissage des champs (Coordonnées approximatives à ajuster)
+        // Identité [cite: 54-58]
+        firstPage.drawText(donnees.nom, { x: 80, y: 532, ...textOptions });
+        firstPage.drawText(donnees.prenom, { x: 270, y: 532, ...textOptions });
+        firstPage.drawText(donnees.date_naissance, { x: 95, y: 515, ...textOptions });
+        firstPage.drawText(donnees.commune_naissance, { x: 195, y: 515, ...textOptions });
+        firstPage.drawText(donnees.dept_naissance, { x: 360, y: 515, ...textOptions });
+
+        // Adresse et Contact [cite: 59-63]
+        firstPage.drawText(donnees.adresse, { x: 95, y: 500, ...textOptions });
+        firstPage.drawText(donnees.cp, { x: 110, y: 484, ...textOptions });
+        firstPage.drawText(donnees.ville, { x: 250, y: 484, ...textOptions });
+        firstPage.drawText(donnees.tel, { x: 105, y: 467, ...textOptions });
+        firstPage.drawText(donnees.email, { x: 250, y: 467, ...textOptions });
+
+        // Pièce d'identité [cite: 64-67]
+        firstPage.drawText(donnees.pi_id, { x: 205, y: 452, ...textOptions });
+        firstPage.drawText(donnees.pi_date, { x: 105, y: 436, ...textOptions });
+        firstPage.drawText(donnees.pi_lieu, { x: 210, y: 436, ...textOptions });
+
+        // Réservation [cite: 74-81, 84]
+        const textePrix = document.getElementById('affichageTarif').innerText;
+        firstPage.drawText(donnees.metrage, { x: 135, y: 246, ...textOptions });
+        firstPage.drawText(textePrix, { x: 245, y: 246, ...textOptions });
+
+        // Date du jour [cite: 87]
+        const aujourdhui = new Date().toLocaleDateString('fr-FR');
+        firstPage.drawText(aujourdhui, { x: 270, y: 105, ...textOptions });
+
+        // 4. Générer et proposer le téléchargement
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Inscription_${donnees.nom}.pdf`;
+        link.click();
+
+    } catch (err) {
+        console.error("Erreur PDF:", err);
+        alert("L'inscription est validée mais le PDF n'a pas pu être généré.");
+    }
+}
 </script>
 
 </body>
